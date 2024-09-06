@@ -1,0 +1,29 @@
+From a781be68e5d80718dfe7d3b0291e1b3d4664680f Mon Sep 17 00:00:00 2001
+From: Kas User <kas@example.com>
+Date: Fri, 6 Sep 2024 10:15:03 +0000
+Subject: [PATCH] XNNPACK-support-32-bit-x86-add-patch-stanzas
+
+---
+ tensorflow/workspace2.bzl | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
+index 6182b77ddbc..67842491406 100644
+--- a/tensorflow/workspace2.bzl
++++ b/tensorflow/workspace2.bzl
+@@ -164,6 +164,7 @@ def _tf_repositories():
+         name = "XNNPACK",
+         sha256 = "60a504f285fe529e85f3530d8b9c0e7e42e9c78b87b095e71a4e41b0c6412227",
+         strip_prefix = "XNNPACK-488a695e3a10269755895da05c2711aadf08489b",
++        patch_file = ["//third_party:0001-XNNPACK-support-32-bit-x86.patch"],
+         urls = tf_mirror_urls("https://github.com/google/XNNPACK/archive/488a695e3a10269755895da05c2711aadf08489b.zip"),
+     )
+     # LINT.ThenChange(//tensorflow/lite/tools/cmake/modules/xnnpack.cmake)
+@@ -186,6 +187,7 @@ def _tf_repositories():
+         name = "cpuinfo",
+         sha256 = "5d7f00693e97bd7525753de94be63f99b0490ae6855df168f5a6b2cfc452e49e",
+         strip_prefix = "cpuinfo-3c8b1533ac03dd6531ab6e7b9245d488f13a82a5",
++        patch_file = ["//third_party:0001-cpuinfo-support-32-bit-x86.patch"],
+         urls = tf_mirror_urls("https://github.com/pytorch/cpuinfo/archive/3c8b1533ac03dd6531ab6e7b9245d488f13a82a5.zip"),
+     )
+ 

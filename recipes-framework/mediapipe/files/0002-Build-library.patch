@@ -1,0 +1,85 @@
+From 13e1e5ff51c414763817e8e651c8963637c6c934 Mon Sep 17 00:00:00 2001
+From: "w.stott" <w.stott@engineeredarts.co.uk>
+Date: Mon, 13 Mar 2023 13:09:02 +0100
+Subject: [PATCH] Build library
+
+---
+ mediapipe/examples/desktop/libmediapipe/BUILD | 53 +++++++++++++++++++
+ mediapipe/framework/BUILD                     |  1 +
+ 2 files changed, 54 insertions(+)
+ create mode 100644 mediapipe/examples/desktop/libmediapipe/BUILD
+
+diff --git a/mediapipe/examples/desktop/libmediapipe/BUILD b/mediapipe/examples/desktop/libmediapipe/BUILD
+new file mode 100644
+index 00000000..e377e868
+--- /dev/null
++++ b/mediapipe/examples/desktop/libmediapipe/BUILD
+@@ -0,0 +1,55 @@
++# Copyright 2021 The MediaPipe Authors.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#      http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++licenses(["notice"])
++
++package(default_visibility = ["//mediapipe/examples:__subpackages__"])
++
++cc_binary(
++    name = "mediapipe",
++    deps = [
++        # Basic dependencies for image inference
++        "//mediapipe/framework:calculator_framework",
++        "//mediapipe/framework/formats:image_frame",
++        "//mediapipe/framework/port:parse_text_proto",
++        "//mediapipe/framework/port:status",
++        "//mediapipe/calculators/image:set_alpha_calculator",
++        # GPU Helpers
++        "//mediapipe/gpu:gl_calculator_helper",
++        "//mediapipe/gpu:gpu_buffer",
++        "//mediapipe/gpu:gpu_shared_data_internal",
++        # Stuff used by the GPU models we want
++        "//mediapipe/modules/face_detection:face_detection_short_range_gpu",
++        "//mediapipe/modules/face_detection:face_detection_full_range_gpu",
++        "//mediapipe/modules/holistic_landmark:holistic_landmark_gpu",
++        "//mediapipe/modules/hand_landmark:hand_landmark_tracking_gpu",
++        "//mediapipe/graphs/face_mesh:desktop_live_gpu_calculators",
++        "//mediapipe/graphs/pose_tracking:pose_tracking_gpu_deps",
++        # Stuff used by the CPU/TPU models we want
++        "//mediapipe/graphs/hand_tracking:desktop_tflite_calculators",
++        "//mediapipe/modules/face_detection:face_detection_short_range_cpu",
++        "//mediapipe/modules/face_detection:face_detection_full_range_cpu",
++        "//mediapipe/calculators/image:image_transformation_calculator",
++        "//mediapipe/calculators/tflite:tflite_converter_calculator",
++        "//mediapipe/calculators/tflite:tflite_inference_calculator",
++        "//mediapipe/calculators/tflite:ssd_anchors_calculator",
++        "//mediapipe/calculators/tflite:tflite_tensors_to_detections_calculator",
++        "//mediapipe/calculators/util:non_max_suppression_calculator",
++        "//mediapipe/calculators/util:detection_letterbox_removal_calculator",
++        # These are needed but nothing in the existing dependency chains pulls them in
++        "//mediapipe/framework/profiler:loose_headers"
++    ],
++    linkopts = ["-Wl,-soname,libmediapipe.so.0"],
++    linkshared = 1, ## important
++)
+\ No newline at end of file
+diff --git a/mediapipe/framework/BUILD b/mediapipe/framework/BUILD
+index 3d72a84f..aee5fefa 100644
+--- a/mediapipe/framework/BUILD
++++ b/mediapipe/framework/BUILD
+@@ -329,6 +329,7 @@ cc_library(
+     visibility = [
+         ":mediapipe_internal",
+     ],
++    alwayslink=1,
+     deps = [
+         ":calculator_base",
+         ":calculator_cc_proto",

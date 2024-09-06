@@ -1,0 +1,25 @@
+From 2cdc53a4d19cdd33211f18c82d824f0ac1099e92 Mon Sep 17 00:00:00 2001
+From: Kas User <kas@example.com>
+Date: Wed, 12 Jun 2024 14:34:14 +0000
+Subject: [PATCH] update libedgetpu
+
+---
+ WORKSPACE | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/WORKSPACE b/WORKSPACE
+index 382906cc..bca006ab 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -585,9 +585,9 @@ tf_workspace2()
+ http_archive(
+   name = "libedgetpu",
+   sha256 = "14d5527a943a25bc648c28a9961f954f70ba4d79c0a9ca5ae226e1831d72fe80",
+-  strip_prefix = "libedgetpu-3164995622300286ef2bb14d7fdc2792dae045b7",
++  strip_prefix = "libedgetpu-e35aed18fea2e2d25d98352e5a5bd357c170bd4d",
+   urls = [
+-    "https://github.com/google-coral/libedgetpu/archive/3164995622300286ef2bb14d7fdc2792dae045b7.tar.gz"
++    "https://github.com/google-coral/libedgetpu/archive/e35aed18fea2e2d25d98352e5a5bd357c170bd4d.tar.gz"
+   ],
+   patch_cmds = [
+       "sed -i 's|        path = \"/usr/include\"|        path = \"%%WORKDIR%%/include\"|'  %%WORKDIR%%/bazel/output_base/external/libedgetpu/workspace.bzl",

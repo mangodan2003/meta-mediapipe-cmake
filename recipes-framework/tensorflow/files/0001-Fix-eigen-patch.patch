@@ -1,0 +1,22 @@
+From 654937626ff383f122d5be8452e888727b887862 Mon Sep 17 00:00:00 2001
+From: Kas User <kas@example.com>
+Date: Fri, 14 Jun 2024 14:28:59 +0000
+Subject: [PATCH] Fix eigen patch!
+
+---
+ ...1-workaround-ice-failure-while-building-from-source-wi.patch | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+index 436f35fca13..fcf6c840198 100644
+--- a/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
++++ b/third_party/eigen3/0001-workaround-ice-failure-while-building-from-source-wi.patch
+@@ -26,7 +26,7 @@ index a9b281f..ec570d6 100644
+      EIGEN_ALIGN_MAX std::remove_const_t<CoeffReturnType> values[PacketSize];
+      EIGEN_UNROLL_LOOP
+      for (int i = 0; i < PacketSize; ++i) {
+--      values[i] = coeff(index+i);
++-      values[i] = coeff(index + i);
+ +      Self::CoeffReturnType a = coeff(index+i);
+ +      values[i] = a;
+      }

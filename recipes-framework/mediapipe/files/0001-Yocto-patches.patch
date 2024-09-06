@@ -1,0 +1,79 @@
+From 266d98ea83f904044f0491d0627bdb026754dacd Mon Sep 17 00:00:00 2001
+From: "w.stott" <w.stott@engineeredarts.co.uk>
+Date: Mon, 26 Jul 2021 13:48:04 +0100
+Subject: [PATCH] Yocto patches
+
+---
+ WORKSPACE       | 19 +++++++++++++++++++
+ mediapipe/BUILD | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+)
+
+diff --git a/WORKSPACE b/WORKSPACE
+index fd13e9b3..84424a25 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -152,6 +152,25 @@ load(
+ )
+ apple_support_dependencies()
+ 
++
++# Yocto Additions
++new_local_repository(
++    name = "yocto_compiler",
++    path = "%%WORKDIR%%",
++    build_file = "//:BUILD.yocto_compiler",
++)
++
++load("//third_party/toolchains/yocto:yocto_compiler_configure.bzl", "yocto_compiler_configure")
++
++# Point //external/local_config_yocto_compiler to //external/yocto_compiler
++yocto_compiler_configure(
++    name = "local_config_yocto_compiler",
++    build_file = "//third_party/toolchains/yocto:BUILD",
++    remote_config_repo = "../yocto_compiler",
++)
++# END Yocto Additions
++
++
+ # This is used to select all contents of the archives for CMake-based packages to give CMake access to them.
+ all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
+ 
+diff --git a/mediapipe/BUILD b/mediapipe/BUILD
+index 90edc8a5..c0a54a52 100644
+--- a/mediapipe/BUILD
++++ b/mediapipe/BUILD
+@@ -25,6 +25,34 @@ config_setting(
+     visibility = ["//visibility:public"],
+ )
+ 
++config_setting(
++    name = "yocto_armeabi",
++    values = {
++        "crosstool_top": "@local_config_yocto_compiler//:toolchain",
++        "cpu": "armeabi",
++    },
++    visibility = ["//visibility:public"],
++)
++
++config_setting(
++    name = "yocto_armv8",
++    values = {
++        "crosstool_top": "@local_config_yocto_compiler//:toolchain",
++        "cpu": "armv8",
++    },
++    visibility = ["//visibility:public"],
++)
++
++config_setting(
++    name = "yocto_aarch64",
++    values = {
++        "crosstool_top": "@local_config_yocto_compiler//:toolchain",
++        "cpu": "aarch64",
++    },
++    visibility = ["//visibility:public"],
++)
++
++
+ # Android x86 32-bit.
+ config_setting_and_platform(
+     name = "android_x86",

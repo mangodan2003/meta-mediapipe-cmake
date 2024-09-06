@@ -1,0 +1,27 @@
+From 3e19b66e69a5dccc9082e6c153dc9f5d98db37b7 Mon Sep 17 00:00:00 2001
+From: Will S <willstott101@gmail.com>
+Date: Wed, 11 Oct 2023 14:20:10 +0100
+Subject: [PATCH] fix: TFLiteGPURunner crash on Linux when use_advanced_gpu_api
+
+ is true #2463
+
+---
+ mediapipe/util/tflite/tflite_gpu_runner.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mediapipe/util/tflite/tflite_gpu_runner.cc b/mediapipe/util/tflite/tflite_gpu_runner.cc
+index 14a12db8..4c422835 100644
+--- a/mediapipe/util/tflite/tflite_gpu_runner.cc
++++ b/mediapipe/util/tflite/tflite_gpu_runner.cc
+@@ -252,8 +252,10 @@ absl::Status TFLiteGPURunner::InitializeOpenCL(
+   MP_RETURN_IF_ERROR(cl_environment_->NewInferenceBuilder(
+       cl_options, std::move(graph_cl), builder));
+ 
+-#endif  // __ANDROID__
+   return absl::OkStatus();
++#else
++  return mediapipe::UnimplementedError("Currently only Android is supported");
++#endif  // __ANDROID__
+ }
+ 
+ #ifdef __ANDROID__

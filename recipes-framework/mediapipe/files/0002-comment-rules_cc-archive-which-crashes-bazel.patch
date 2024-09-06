@@ -1,0 +1,32 @@
+From a1412484aecf78c021061738d247c517d2a61090 Mon Sep 17 00:00:00 2001
+From: Kas User <kas@example.com>
+Date: Wed, 12 Jun 2024 14:35:36 +0000
+Subject: [PATCH] comment rules_cc archive which crashes bazel
+
+---
+ WORKSPACE | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/WORKSPACE b/WORKSPACE
+index bca006ab..157cd658 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -35,12 +35,12 @@ http_archive(
+     sha256 = "f841f78243f179326f2a80b719f2887c38fe226d288ecdc46e2aa091e6aa43bc",
+ )
+ 
+-http_archive(
+-    name = "rules_cc",
+-    strip_prefix = "rules_cc-2f8c04c04462ab83c545ab14c0da68c3b4c96191",
+-# The commit can be updated if the build passes. Last updated 6/23/22.
+-    urls = ["https://github.com/bazelbuild/rules_cc/archive/2f8c04c04462ab83c545ab14c0da68c3b4c96191.zip"],
+-)
++# http_archive(
++#     name = "rules_cc",
++#     strip_prefix = "rules_cc-2f8c04c04462ab83c545ab14c0da68c3b4c96191",
++# # The commit can be updated if the build passes. Last updated 6/23/22.
++#     urls = ["https://github.com/bazelbuild/rules_cc/archive/2f8c04c04462ab83c545ab14c0da68c3b4c96191.zip"],
++# )
+ 
+ http_archive(
+     name = "rules_foreign_cc",

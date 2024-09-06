@@ -1,0 +1,21 @@
+From 43890a70ecef4eba9b0f094a343ba0b134a8dfb0 Mon Sep 17 00:00:00 2001
+From: dan <dan@engineeredarts.co.uk>
+Date: Thu, 1 Aug 2024 11:27:17 +0100
+Subject: [PATCH] add missing include
+
+---
+ mediapipe/framework/deps/re2.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mediapipe/framework/deps/re2.h b/mediapipe/framework/deps/re2.h
+index 89dc8fcd..e59506f3 100644
+--- a/mediapipe/framework/deps/re2.h
++++ b/mediapipe/framework/deps/re2.h
+@@ -16,6 +16,7 @@
+ #define MEDIAPIPE_FRAMEWORK_DEPS_RE2_H_
+ 
+ #include <regex>  // NOLINT
++#include <mutex>
+ 
+ namespace mediapipe {
+ 

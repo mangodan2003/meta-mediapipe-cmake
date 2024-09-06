@@ -1,0 +1,22 @@
+From 4c9dcdb23665160d4eb7ab7f6ead0a70610d86c1 Mon Sep 17 00:00:00 2001
+From: Kas User <kas@example.com>
+Date: Wed, 12 Jun 2024 14:39:40 +0000
+Subject: [PATCH] update libedgetpu checksum
+
+---
+ WORKSPACE | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/WORKSPACE b/WORKSPACE
+index 157cd658..81d87ebd 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -584,7 +584,7 @@ tf_workspace2()
+ # Edge TPU
+ http_archive(
+   name = "libedgetpu",
+-  sha256 = "14d5527a943a25bc648c28a9961f954f70ba4d79c0a9ca5ae226e1831d72fe80",
++  sha256 = "4e0a49c767104438e5eebd638fe814c9c5776f5173a27684ed4ecb401173872d",
+   strip_prefix = "libedgetpu-e35aed18fea2e2d25d98352e5a5bd357c170bd4d",
+   urls = [
+     "https://github.com/google-coral/libedgetpu/archive/e35aed18fea2e2d25d98352e5a5bd357c170bd4d.tar.gz"

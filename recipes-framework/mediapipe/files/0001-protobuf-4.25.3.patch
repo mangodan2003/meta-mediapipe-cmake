@@ -1,0 +1,24 @@
+From 5d484ff3d9d3089050b09332176bb8968ade2896 Mon Sep 17 00:00:00 2001
+From: Kas User <kas@example.com>
+Date: Wed, 12 Jun 2024 15:15:18 +0000
+Subject: [PATCH] protobuf 4.25.3
+
+---
+ WORKSPACE | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/WORKSPACE b/WORKSPACE
+index 81d87ebd..f24cccd7 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -62,8 +62,8 @@ http_archive(
+ http_archive(
+     name = "com_google_protobuf",
+     sha256 = "87407cd28e7a9c95d9f61a098a53cf031109d451a7763e7dd1253abf8b4df422",
+-    strip_prefix = "protobuf-3.19.1",
+-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.19.1.tar.gz"],
++    strip_prefix = "protobuf-4.25.3",
++    urls = ["https://github.com/protocolbuffers/protobuf/archive/v4.25.3.tar.gz"],
+     patches = [
+         "@//third_party:com_google_protobuf_fixes.diff"
+     ],
