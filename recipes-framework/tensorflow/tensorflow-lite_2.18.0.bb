@@ -100,7 +100,7 @@ do_compile () {
     ${BAZEL} build \
         ${CUSTOM_BAZEL_FLAGS} \
         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
-        --define tflite_with_xnnpack=false \
+        --define tflite_with_xnnpack=true \
         --repo_env=TF_PYTHON_VERSION=3.12 \
         tensorflow/lite/delegates/gpu:gl_delegate \
         tensorflow/lite:libtensorflowlite.so \
