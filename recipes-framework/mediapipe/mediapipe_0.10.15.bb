@@ -91,9 +91,9 @@ do_configure:prepend() {
     touch ${S}/src/mediapipe/examples/desktop/libmediapipe/dummy.c
     # For some reason these files get missed
     cp ${S}/mediapipe/framework/port/port.h ${S}/src/mediapipe/framework/port
-    cp ${S}/mediapipe/util/tflite/tflite_signature_reader.h ${S}/src/mediapipe/util/tflite
-    cp ${S}/mediapipe/calculators/tensor/tflite_delegate_ptr.h ${S}/src/mediapipe/calculators/tensor
-    cp ${S}/mediapipe/calculators/tensor/inference_feedback_manager.h ${S}/src/mediapipe/calculators/tensor
+    #cp ${S}/mediapipe/util/tflite/tflite_signature_reader.h ${S}/src/mediapipe/util/tflite
+    #cp ${S}/mediapipe/calculators/tensor/tflite_delegate_ptr.h ${S}/src/mediapipe/calculators/tensor
+    #cp ${S}/mediapipe/calculators/tensor/inference_feedback_manager.h ${S}/src/mediapipe/calculators/tensor
     mkdir -p ${S}/src/mediapipe/framework/formats/tensor
     cp ${S}/mediapipe/framework/formats/tensor/internal.h ${S}/src/mediapipe/framework/formats/tensor
 }
@@ -102,10 +102,11 @@ do_configure:prepend() {
 do_install:append() {
     # The files that mediapipe_bazel_to_cmake.py miss are also required by dependants. Manually install them..
     install ${S}/src/mediapipe/framework/port/port.h ${D}/usr/include/mediapipe/framework/port/port.h
+    mv ${D}${libdir}/libmediapipe.so ${D}${libdir}/libmediapipe.so.${PV}
+    ln -s libmediapipe.so.${PV} ${D}${libdir}/libmediapipe.so.0
+    ln -s libmediapipe.so.0 ${D}${libdir}/libmediapipe.so
 }
 
 FILES:${PN} = "/opt/mediapipe/* ${bindir}/* ${libdir}/*"
-INSANE_SKIP:${PN}-dev += " dev-elf "
-
 
 

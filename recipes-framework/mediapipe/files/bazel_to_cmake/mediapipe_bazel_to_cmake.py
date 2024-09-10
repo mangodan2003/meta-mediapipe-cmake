@@ -567,6 +567,19 @@ class Project:
             def __init__(self, module, **kwargs):
                 super().__init__(module, "add_library", **kwargs)
 
+        class CCLibraryWithTfLite(CCLibrary):
+            '''
+            Each cc_library_with_tflite entry in a BUILD file is represented by an instance of this class
+
+            '''
+            def __init__(self, module, **kwargs):
+                deps = get_arg_or_default("deps", [], **kwargs)
+                tflite_deps = get_arg_or_default("tflite_deps", [], **kwargs)
+                deps.extend(tflite_deps)
+                kwargs["deps"] = deps
+                super().__init__(module, **kwargs)
+
+
         class CCProtoLibrary(AbstractCCRule):
             def __init__(self, module, **kwargs):
                 super().__init__(module, **kwargs)
@@ -1338,8 +1351,7 @@ class Project:
 
 
         def cc_library_with_tflite(self, **kwargs):
-            self._log_context.info(f"cc_library_with_tflite(kwargs: {kwargs}) WARNING: using cc_library instead of  cc_library_with_tflite for now!")
-            Project.Module.CCLibrary(self, **kwargs)
+            Project.Module.CCLibraryWithTfLite(self, **kwargs)
 
         def cc_proto_library(self, **kwargs):
             Project.Module.CCProtoLibrary(self, **kwargs)

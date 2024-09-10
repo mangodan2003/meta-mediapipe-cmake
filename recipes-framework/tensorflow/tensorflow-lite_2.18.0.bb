@@ -1,35 +1,4 @@
-# tensorflow lite build with patches required by mediapipe (taken from mediapipe and amended in some cases)
-
-# Upstream tensorflow-lite recipe doesn't  produce any c headers :(
-# And this option doesn't actually install any of what mediapipe expects :(
-# TF_TARGET_EXTRA += " tensorflow:install_headers "
-
-# Pulling out the big guns...
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
-SRC_URI += "file://mediapipe_tflite_headers.sh \
-file://org_tensorflow_custom_ops.diff \
-file://org_tensorflow_objc_build_fixes.diff \
-file://mediapipe_tflite_headers.sh \
-"
-
-DEPENDS += "mesa \
-"
-
-TF_TARGET_EXTRA = " \
-tensorflow/lite/delegates/gpu:gl_delegate \
-tensorflow/lite/delegates/gpu/gl:gl_buffer \
-tensorflow/lite/delegates/gpu/gl:gl_shader \
-tensorflow/lite/delegates/gpu/gl:gl_program \
-tensorflow/lite/delegates/xnnpack:xnnpack_delegate \
-"
-
-
-
 include tensorflow.inc
-
-
-SRCREV = "117a62ac439ed87eb26f67208be60e01c21960de"
 
 SRC_URI += "git://github.com/tensorflow/tensorflow.git;branch=master;protocol=https \
            file://0001-add-yocto-toolchain-to-support-cross-compiling.patch \
@@ -101,11 +70,13 @@ do_compile () {
         ${CUSTOM_BAZEL_FLAGS} \
         --copt -DTF_LITE_DISABLE_X86_NEON --copt -DMESA_EGL_NO_X11_HEADERS \
         --define tflite_with_xnnpack=true \
+        --define create_op_resolver_with_builtin_ops=true \
         --repo_env=TF_PYTHON_VERSION=3.12 \
         tensorflow/lite/delegates/gpu:gl_delegate \
         tensorflow/lite:libtensorflowlite.so \
         tensorflow/lite/tools/benchmark:benchmark_model \
         //tensorflow/lite/examples/label_image:label_image \
+        //tensorflow/lite/c:tensorflowlite_c \
         ${TF_TARGET_EXTRA}
 
     # build pip package
@@ -145,30 +116,6 @@ do_install() {
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
         ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*.whl
 
-
-    # Gl Delegates
-    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/libgl_delegate.so \
-        ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/gl/libgl_buffer.so \
-        ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/gl/libgl_shader.so \
-        ${D}${libdir}
-    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/gl/libgl_program.so \
-        ${D}${libdir}
-    # No .so for this one?
-    #install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/xnnpack/libxnnpack_delegate.so \
-    #    ${D}${libdir}
-
-    # Headers
-    ${WORKDIR}/mediapipe_tflite_headers.sh ${S} ${D}/${includedir}
-
-    # We also ned this lot pulled in by bazel for the tensorflow-lite build:
-    cp -ar ${WORKDIR}/bazel/output_base/external/FP16/include/* ${D}/${includedir}
-
-    # and 
-    install -d ${D}/${includedir}/gemmlowp
-    cp -ar ${WORKDIR}/bazel/output_base/external/gemmlowp/internal ${D}/${includedir}/gemmlowp
-    cp -ar ${WORKDIR}/bazel/output_base/external/gemmlowp/fixedpoint ${D}/${includedir}/gemmlowp
 }
 
 FILES:${PN} += "${libdir} ${sbindir} ${datadir}/*"
@@ -190,12 +137,3 @@ python __anonymous() {
 }
 
 COMPATIBLE_HOST:arm = "null"
-
-
-
-
-
-
-
-
-
