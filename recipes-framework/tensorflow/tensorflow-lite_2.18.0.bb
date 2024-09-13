@@ -1,4 +1,6 @@
 include tensorflow.inc
+SRCREV = "117a62ac439ed87eb26f67208be60e01c21960de"
+
 
 SRC_URI += "git://github.com/tensorflow/tensorflow.git;branch=master;protocol=https \
            file://0001-add-yocto-toolchain-to-support-cross-compiling.patch \
@@ -13,7 +15,11 @@ SRC_URI += "git://github.com/tensorflow/tensorflow.git;branch=master;protocol=ht
            file://0001-Fix-eigen-patch.patch \
            file://0001-support-32-bit-x64-and-arm-for-yocto.patch \
            file://0001-XNNPACK-support-32-bit-x86-add-patch-stanzas.patch \
-           "
+           file://mediapipe_tflite_headers.sh \
+           file://org_tensorflow_custom_ops.diff \
+           file://org_tensorflow_objc_build_fixes.diff \
+           file://mediapipe_tflite_headers.sh \
+"
 
 
 SRC_URI[model-inv3.md5sum] = "a904ddf15593d03c7dd786d552e22d73"
@@ -26,6 +32,9 @@ RDEPENDS:${PN} += " \
     python3 \
     python3-core \
     python3-numpy \
+"
+
+DEPENDS += "mesa \
 "
 
 do_configure:append () {
@@ -51,7 +60,16 @@ do_configure:append () {
     ./configure
 }
 
-TF_TARGET_EXTRA ??= ""
+TF_TARGET_EXTRA ??= " \
+tensorflow/lite/delegates/gpu:gl_delegate \
+tensorflow/lite/delegates/gpu/gl:gl_buffer \
+tensorflow/lite/delegates/gpu/gl:gl_shader \
+tensorflow/lite/delegates/gpu/gl:gl_program \
+tensorflow/lite/delegates/xnnpack:xnnpack_delegate \
+tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_gl.so \
+tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so \
+tensorflow/lite/c:tensorflowlite_c \
+"
 
 export CUSTOM_BAZEL_FLAGS = " \
     ${TF_ARGS_EXTRA} \
@@ -76,7 +94,6 @@ do_compile () {
         tensorflow/lite:libtensorflowlite.so \
         tensorflow/lite/tools/benchmark:benchmark_model \
         //tensorflow/lite/examples/label_image:label_image \
-        //tensorflow/lite/c:tensorflowlite_c \
         ${TF_TARGET_EXTRA}
 
     # build pip package
@@ -95,6 +112,24 @@ do_install() {
 
     install -m 644 ${S}/bazel-bin/tensorflow/lite/c/libtensorflowlite_c.so \
         ${D}${libdir}
+
+    # Gl Delegates
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/libgl_delegate.so \
+        ${D}${libdir}
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/gl/libgl_buffer.so \
+        ${D}${libdir}
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/gl/libgl_shader.so \
+        ${D}${libdir}
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/gl/libgl_program.so \
+        ${D}${libdir}
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_gl.so \
+        ${D}${libdir}
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_delegate.so \
+        ${D}${libdir}
+    install -m 644 ${S}/bazel-bin/tensorflow/lite/python/interpreter_wrapper/_pywrap_tensorflow_interpreter_wrapper.so \
+        ${D}${libdir}
+
+
 
     install -m 755 ${S}/bazel-bin/tensorflow/lite/examples/label_image/label_image \
         ${D}${sbindir}/label_image
@@ -118,6 +153,19 @@ do_install() {
     ${STAGING_BINDIR_NATIVE}/pip3 install --disable-pip-version-check -v \
         -t ${D}/${PYTHON_SITEPACKAGES_DIR} --no-cache-dir --no-deps \
         ${S}/tensorflow/lite/tools/pip_package/gen/tflite_pip/python3/dist/tflite_runtime-${PV}*.whl
+
+    # Headers
+    ${WORKDIR}/mediapipe_tflite_headers.sh ${S} ${D}/${includedir}
+
+    # We also ned this lot pulled in by bazel for the tensorflow-lite build:
+    cp -ar ${WORKDIR}/bazel/output_base/external/FP16/include/* ${D}/${includedir}
+
+    # and 
+    install -d ${D}/${includedir}/gemmlowp
+    cp -ar ${WORKDIR}/bazel/output_base/external/gemmlowp/internal ${D}/${includedir}/gemmlowp
+    cp -ar ${WORKDIR}/bazel/output_base/external/gemmlowp/fixedpoint ${D}/${includedir}/gemmlowp
+
+
 
 }
 

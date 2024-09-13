@@ -73,6 +73,8 @@ bazel_deps_map = {
     '@com_google_absl//absl/base:dynamic_annotations':  'absl::dynamic_annotations',
     '@com_google_absl//absl/debugging:leak_check':      'absl::leak_check',
     '@com_google_absl//absl/functional:bind_front':     'absl::bind_front',
+    '@com_google_absl//absl/base:log_severity':         'absl::log_severity',
+    '@com_google_absl//absl/base:log_severity':         'absl::log',
 
     '@com_google_protobuf//:protobuf':                  'protobuf::libprotobuf',
 
@@ -82,7 +84,7 @@ bazel_deps_map = {
 
 
     '@opencv':                                          '${OpenCV_LIBS}',
-
+    '@linux_opencv//:opencv':                           '${OpenCV_LIBS}',
 
 # This is a hacky list to avoid having to suck this lot in from the tflite soure tree :/
     '@org_tensorflow//tensorflow/lite:framework':       ('-ltensorflowlite','Eigen3::Eigen'),
@@ -103,7 +105,16 @@ bazel_deps_map = {
     '@org_tensorflow//tensorflow/lite/delegates/gpu/gl:variable':       '',
     '@org_tensorflow//tensorflow/lite/delegates/xnnpack:xnnpack_delegate': '',
     '@org_tensorflow//tensorflow/lite/kernels:builtin_ops':             '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite:framework_stable':                '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite:namespace':                       '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite:string_util':                     '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite:util':                            '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite/c:common':                        '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite:type_to_tflitetype':              '-ltensorflowlite',
+    '@org_tensorflow//tensorflow/lite/c:c_api_types':                   '-ltensorflowlite',
 
+    '@org_tensorflow//tensorflow/lite/delegates/gpu/common:model_builder':  '-ltensorflowlite_gpu_delegate',
+    '@org_tensorflow//tensorflow/lite/delegates/gpu:api':                   ('-ltensorflowlite_gpu_delegate', '-ltensorflowlite_gpu_gl', '-lEGL'),
 }
 
 
