@@ -347,7 +347,7 @@ class Project:
                         if src.exists():
                             dst.hardlink_to(src)
                         else:
-                            log.info(f"src file {src} does not exist!")
+                            log.warning(f"src file {src} does not exist!")
 
                 if not headers_only:
                     for s in self.srcs:
@@ -780,9 +780,7 @@ class Project:
             def __init__(self, module, **kwargs):
                 super().__init__(module, **kwargs)
 
-                self._log_context.info(
-                    f"ExpandTemplate(**kwargs: {kwargs}) Implement me!"
-                )
+                self._log_context.info(f"ExpandTemplate(**kwargs: {kwargs})")
                 template = kwargs["template"]
                 if template.startswith("//"):
                     path, filename = template[2:].split(":")
@@ -916,17 +914,9 @@ class Project:
                     ),
                     out=self.name + ".cc",
                     substitutions={
-                        "{{MESSAGE_NAME_HEADER}}": module.package_name()
-                        + "/"
-                        + self.name
-                        + "_type_name.h",
-                        "{{MESSAGE_PROTO_HEADER}}": module.package_name()
-                        + "/"
-                        + proto_lib.replace("_proto", ".pb.h"),
-                        "{{DESCRIPTOR_INC_FILE_PATH}}": module.package_name()
-                        + "/"
-                        + proto_lib
-                        + "_descriptors.inc",
+                        "{{MESSAGE_NAME_HEADER}}": f"{module.package_name()}/{self.name}_type_name.h",
+                        "{{MESSAGE_PROTO_HEADER}}": f"{module.package_name()}/{proto_lib.replace("_proto", ".pb.h")}",
+                        "{{DESCRIPTOR_INC_FILE_PATH}}": f"{module.package_name()}/{proto_lib}_descriptors.inc",
                     },
                     testonly=self.testonly,
                 )
@@ -1213,18 +1203,24 @@ class Project:
                 self.descriptors = set()
 
                 def cmd(rule):
-                    srcs = []
+                    srcs = set()
 
                     rule._log_context.info(
                         f"cmd() for rule {rule.name}, deps: {rule.deps}, deps_as_rules: {rule.deps_as_rules}"
                     )
 
-                    for dep in rule.deps_as_rules.values():
-                        if isinstance(dep, Project.Module.ProtoLibrary):
-                            srcs.append(dep.outs[0])
+                    def collate_protos(rule):
+                        for dep in rule.deps_as_rules.values():
+                            if isinstance(dep, Project.Module.ProtoLibrary):
+                                srcs.add(dep.outs[0])
+                            collate_protos(dep)
+
+                    collate_protos(rule)
 
                     if len(srcs) < 1:
                         fail(f"No srcs resolved for {rule.name}")
+
+                    self._log_context.info(f"srcs: {srcs}")
 
                     # Set the rules sources as CMakeCustomCommand needs to write these as DEPENDS
                     rule.srcs = srcs
@@ -1736,6 +1732,8 @@ class Project:
         tree = self.make_modules_tree()
         self.write_cmake_files(dest_dir, tree, deps_resolved)
 
+        self.dump_deps(top_level_build_module, deps_log)
+
     def resolve_aliases(self, deps_log, deps_resolved):
         for name in list(deps_resolved.keys()):
             rule = deps_resolved[name]
@@ -1960,6 +1958,33 @@ install(TARGETS {artifacts}DESTINATION lib OPTIONAL)
         path = dest_dir / "CMakeLists.txt"
         with path.open("w", encoding="utf-8") as f:
             f.write(content)
+
+    def dump_deps(self, top_level_module, deps_log):
+        """
+        Write out a dependency tree...
+        """
+        for a in top_level_module.rules.values():
+            if not a.install:
+                continue
+            deps_log.info(f"Dumping deps tree for: {a.name}")
+            resolved = {}
+            index = 0
+
+            def dump_deps(rule, depth):
+                nonlocal index
+                if rule in resolved:
+                    index_ = resolved[rule]
+                    deps_log.info(
+                        f"[{index}]{' '*depth} {rule.full_path} Already dumped - See [{index_}]"
+                    )
+                else:
+                    resolved[rule] = index
+                    deps_log.info(f"[{index}]{' '*depth} {rule.full_path}")
+                    index += 1
+                    for d in rule.deps_as_rules.values():
+                        dump_deps(d, depth + 1)
+
+            dump_deps(a, 0)
 
 
 def write_cmakelists_txt(cmake_log, dest_dir, info, deps_resolved):
