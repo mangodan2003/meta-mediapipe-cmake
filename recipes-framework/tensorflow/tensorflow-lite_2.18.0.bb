@@ -3,6 +3,15 @@ SRCREV = "117a62ac439ed87eb26f67208be60e01c21960de"
 
 
 SRC_URI += "git://github.com/tensorflow/tensorflow.git;branch=master;protocol=https \
+           file://0001-use-local-bazel-to-workaround-bazel-paralle-issue.patch \
+           file://0001-third_party-eigen_archive-workaround-ice-failure-whi.patch \
+           file://0001-drop-bazel_toolchains_repositories-to-support-offlin.patch \
+           file://0001-drop-v2-config.patch \
+           file://0002-Replace-distutils.sysconfig.get_python_lib-with-sysc.patch \
+           file://0001-hardcode-go-SDKS.patch \
+           file://0001-fix-build-failure.patch \
+           file://0001-support-hermetic-Python.patch \
+           git://github.com/tensorflow/tensorflow.git;branch=master;protocol=https \
            file://0001-add-yocto-toolchain-to-support-cross-compiling.patch \
            file://0001-fix-build-tensorflow-lite-examples-label_image-label.patch \
            file://0001-label_image-tweak-default-model-location.patch \
@@ -19,7 +28,8 @@ SRC_URI += "git://github.com/tensorflow/tensorflow.git;branch=master;protocol=ht
            file://org_tensorflow_custom_ops.diff \
            file://org_tensorflow_objc_build_fixes.diff \
            file://mediapipe_tflite_headers.sh \
-"
+           file://0001-Same-absl-as-yocto-scarthgap.patch \
+           "
 
 
 SRC_URI[model-inv3.md5sum] = "a904ddf15593d03c7dd786d552e22d73"
