@@ -67,6 +67,7 @@ SRC_URI = "git://github.com/google/mediapipe.git;protocol=https;branch=master \
            file://bazel_to_cmake/mediapipe_bazel_to_cmake.py \
            file://bazel_to_cmake/pywoodfortreesgui.py \
            file://0001-add-missing-include.patch \
+           file://BUILD.any_proto \
            "
 
 # file://0009-yocto-protobuf.patch is disabled cause it's not quite working yet for 0.8.9
@@ -86,8 +87,11 @@ do_configure:prepend() {
     rm -rf src include
     ${PYTHON} ${WORKDIR}/bazel_to_cmake/mediapipe_bazel_to_cmake.py mediapipe/examples/desktop/libmediapipe mediapipe
     mv out/* ${S}
+    mkdir -p hacks
+    cp ${WORKDIR}/BUILD.any_proto hacks
+    cp ${WORKDIR}/recipe-sysroot/usr/include/google/protobuf/any.proto hacks
     cd ${B}
-
+    
     touch ${S}/src/mediapipe/examples/desktop/libmediapipe/dummy.c
     # For some reason these files get missed
     cp ${S}/mediapipe/framework/port/port.h ${S}/src/mediapipe/framework/port

@@ -72,6 +72,7 @@ OECMAKE_TARGET_COMPILE = "tools"
 do_configure:prepend() {
 
     cd ${S}
+    rm -rf src include
     ${PYTHON} ${WORKDIR}/bazel_to_cmake/mediapipe_bazel_to_cmake.py mediapipe/examples/desktop/libmediapipe mediapipe
     mv out/* ${S}
     cd ${B}
