@@ -1890,7 +1890,7 @@ class Project:
             try:
                 module = Project.Module(self._log_context, mp)
             except Exception as e:
-                fail("Module loading failed : {e}")
+                fail(f"Module loading failed : {e}")
 
         elif module_path == "":
             # A rule within the same module

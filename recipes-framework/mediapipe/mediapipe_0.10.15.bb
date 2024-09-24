@@ -88,7 +88,7 @@ do_configure:prepend() {
     ${PYTHON} ${WORKDIR}/bazel_to_cmake/mediapipe_bazel_to_cmake.py mediapipe/examples/desktop/libmediapipe mediapipe
     mv out/* ${S}
     mkdir -p hacks
-    cp ${WORKDIR}/BUILD.any_proto hacks
+    cp ${WORKDIR}/BUILD.any_proto hacks/BUILD
     cp ${WORKDIR}/recipe-sysroot/usr/include/google/protobuf/any.proto hacks
     cd ${B}
     
