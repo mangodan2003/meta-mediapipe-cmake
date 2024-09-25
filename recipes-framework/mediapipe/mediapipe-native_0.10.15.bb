@@ -58,6 +58,7 @@ SRC_URI = "git://github.com/google/mediapipe.git;protocol=https;branch=master \
            file://0001-Remove-MEDIAPIPE_OMIT_EGL_WINDOW_BIT-flag-and-autode.patch \
            file://bazel_to_cmake/mediapipe_bazel_to_cmake.py \
            file://bazel_to_cmake/pywoodfortreesgui.py \
+           file://BUILD.any_proto \
            "
 
 # file://0009-yocto-protobuf.patch is disabled cause it's not quite working yet for 0.8.9
@@ -75,16 +76,12 @@ do_configure:prepend() {
     rm -rf src include
     ${PYTHON} ${WORKDIR}/bazel_to_cmake/mediapipe_bazel_to_cmake.py mediapipe/examples/desktop/libmediapipe mediapipe
     mv out/* ${S}
+    mkdir -p hacks
+    cp ${WORKDIR}/BUILD.any_proto hacks/BUILD
+    cp ${RECIPE_SYSROOT_NATIVE}/usr/include/google/protobuf/any.proto hacks
     cd ${B}
  
-    touch ${S}/src/mediapipe/examples/desktop/libmediapipe/dummy.c
-    # For some reason these file get missed
-    #cp ${S}/mediapipe/framework/port/port.h ${S}/src/mediapipe/framework/port
-    #cp ${S}/mediapipe/util/tflite/tflite_signature_reader.h ${S}/src/mediapipe/util/tflite
-    #cp ${S}/mediapipe/calculators/tensor/tflite_delegate_ptr.h ${S}/src/mediapipe/calculators/tensor
-    #cp ${S}/mediapipe/calculators/tensor/inference_feedback_manager.h ${S}/src/mediapipe/calculators/tensor
-    #mkdir ${S}/src/mediapipe/framework/formats/tensor
-    #cp ${S}/mediapipe/framework/formats/tensor/internal.h ${S}/src/mediapipe/framework/formats/tensor
+
 }
 
 

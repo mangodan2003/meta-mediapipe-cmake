@@ -18,13 +18,13 @@ DEPENDS = " \
     python3-wheel-native \
     xxd-native \
     libusb1 \
-    abseil-cpp \
     glog \
     libeigen \
     tensorflow-lite \
     mesa \
     opencl-headers \
     mediapipe-native \
+    abseil-cpp \
 "
 
 # NOTE: This depends on a pre-release version of tensorflow-lite (8038e44ea38bb889095afaaf6ad05e94adaed8d2) , patched as per the tflite bbappend in this repo
@@ -89,7 +89,7 @@ do_configure:prepend() {
     mv out/* ${S}
     mkdir -p hacks
     cp ${WORKDIR}/BUILD.any_proto hacks/BUILD
-    cp ${WORKDIR}/recipe-sysroot/usr/include/google/protobuf/any.proto hacks
+    cp ${RECIPE_SYSROOT}/usr/include/google/protobuf/any.proto hacks
     cd ${B}
     
     touch ${S}/src/mediapipe/examples/desktop/libmediapipe/dummy.c

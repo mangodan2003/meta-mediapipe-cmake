@@ -29,3 +29,11 @@ Finally we build it.
   * python3 ../../../../mediapipe/recipes-framework/mediapipe/files/bazel_to_cmake/mediapipe_bazel_to_cmake.py mediapipe/examples/desktop/face_detection face_detection_gpu
   * rsync out/* .
   * ./oe-workdir/temp/run.do_compile
+
+# Current Status:
+
+Running our own app linked against this we get:
+
+    Packet type mismatch on calculator outputting to stream "image_rgb": The Packet stores "mediapipe::GpuBuffer", but "mediapipe::GpuBuffer" was requested."
+
+which comes from Packet::ValidateAsType() (there are several sources of this same error string.)

@@ -176,6 +176,9 @@ do_install() {
     cp -ar ${WORKDIR}/bazel/output_base/external/gemmlowp/fixedpoint ${D}/${includedir}/gemmlowp
 
 
+    # And absl - even if we use the exact same git hash building in tesnor flow and linking mediapipe against yocto built 
+    # equivelant results in runtime errors - or at least this is what im blaiming them on atm.
+    #cp -ar ${RECIPE_SYSROOT}/usr/include/absl ${D}/usr/include/
 
 }
 
